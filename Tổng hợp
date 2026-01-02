@@ -1,667 +1,1621 @@
-loadstring(game:HttpGet(("https://raw.githubusercontent.com/daucobonhi/Ui-Redz-V2/refs/heads/main/UiREDzV2.lua")))()
+-- ===== ORIONLIB =====
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua"))()
 
-      
-       local Window = MakeWindow({
-         Hub = {
-         Title = "Bear Hud",
-         Animation = "Premium"
-         },
-        Key = {
-        KeySystem = true,
-        Title = "Blox Fruit",
-        Description = "Blox Fruit TongHop",
-        KeyLink = "https://discord.gg/AjDHA3mz",
-        Keys = {"HuyDepzai"},
-        Notifi = {
-        Notifications = true,
-        CorrectKey = "Wrong Key Successfull ✅",
-       Incorrectkey = "Working Key No Key ❌",
-      }
-    }
-  })
+local Window = OrionLib:MakeWindow({
+    Name = "Gáº¥u hub (free)",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "Gáº¥u hub (free)"
+})
+-- ===== SERVICES =====
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-       MinimizeButton({
-       Image = "http://www.roblox.com/asset/?id=102265533318728",
-       Size = {60, 60},
-       Color = Color3.fromRGB(10, 10, 10),
-       Corner = true,
-       Stroke = false,
-       StrokeColor = Color3.fromRGB(255, 0, 0)
-      })
-      
------- Tab
-     local Tab2o = MakeTab({Name = "Script Grow A Garden"})
-     local Tab1o = MakeTab({Name = "Script Blox Fruits"})
-     local Tab3o = MakeTab({Name = "Support all game"})
-     local Tab4o = MakeTab({Name = "Script Premium"})
-     local Tab5o = MakeTab({Name = "Kaitun Blox Fruits"})
-     local Tab6o = MakeTab({Name = "Kaitun Grow A Garden"})
-     local Tab7o = MakeTab({Name = "Auto Bouty BloxFruits"})
-     local Tab8o = MakeTab({Name = "Auto V4"})
-     local Tab9o = MakeTab({Name = "Tự Động Hop"})
-     local Tab10o = MakeTab({Name = "99 ngày Trong rừng"})
-     local Tab11o = MakeTab({Name = "Script Dead rail"})
-     local Tab12o = MakeTab({Name = "sleat a brainrot"})
-     local Tab13o = MakeTab({Name = "Auto Lụm Trái"})
-     local Tab14o = MakeTab({Name = "Script Mua Premium"})
-     
-------- BUTTON
-    
-    AddButton(Tab9o, {
-     Name = "Full Mon",
+-- HĂ m tĂ¡ch chuá»—i
+local function split(str, sep)
+    local t = {}
+    for s in string.gmatch(str, "([^" .. sep .. "]+)") do
+        table.insert(t, s)
+    end
+    return t
+end
+local safe = function(f, ...) return pcall(f, ...) end
+
+-- ===== MAIN TAB =====
+local MainTab = Window:MakeTab({Name = "Main", PremiumOnly = false})
+
+-- Kill Aura
+local killAura = false
+MainTab:AddToggle({
+    Name = "Kill Aura",
+    Default = false,
+    Callback = function(state)
+        killAura = state
+        task.spawn(function()
+            while killAura do
+                task.wait(0.1)
+                safe(function()
+                    sethiddenproperty(LocalPlayer, "SimulationRadius", 1e12)
+                    sethiddenproperty(LocalPlayer, "MaxSimulationRadius", 1e12)
+                end)
+                for _, d in ipairs(workspace:GetDescendants()) do
+                    if d:IsA("Humanoid") and d.Parent.Name ~= LocalPlayer.Name then
+                        safe(function() d.Health = 0 end)
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Copy Armor Toggle
+local copyArmor = false
+MainTab:AddToggle({
+    Name = "Copy Armor",
+    Default = false,
+    Callback = function(state)
+        copyArmor = state
+        task.spawn(function()
+            while copyArmor do
+                task.wait(1) -- delay 1s Ä‘á»ƒ trĂ¡nh spam quĂ¡ máº¡nh
+                local armors = {"Cursed-Armor","Unique-Armor","Darkness-Armor","Thunder-Armor","Diamond-Armor","Golden-Armor","Epic-Armor","Iron-Armor","Wooden-Armor"}
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        local backpack = player:FindFirstChild("Backpack")
+                        if backpack then
+                            for _, armorName in ipairs(armors) do
+                                local armor = backpack:FindFirstChild(armorName)
+                                if armor and armor:FindFirstChild("K") and armor.K:FindFirstChild("Fire") then
+                                    safe(function() armor.K.Fire:FireServer() end)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Auto Attack
+local whitelist = {"Hitbox","Skill","Z","X"}
+local autoAttack = false
+local attackDelay = 0.3
+MainTab:AddToggle({
+    Name = "Auto Attack",
+    Default = false,
+    Callback = function(state)
+        autoAttack = state
+        task.spawn(function()
+            while autoAttack do
+                task.wait(attackDelay)
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer and player.Character then
+                        local containers = {player.Character, player:FindFirstChildOfClass("Backpack")}
+                        for _, container in ipairs(containers) do
+                            if container then
+                                for _, tool in ipairs(container:GetChildren()) do
+                                    if tool:IsA("Tool") then
+                                        for _, v in ipairs(tool:GetChildren()) do
+                                            if v:IsA("RemoteEvent") then
+                                                for _, keyword in ipairs(whitelist) do
+                                                    if string.find(v.Name, keyword) then
+                                                        safe(function() v:FireServer() end)
+                                                        break
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Secret Buttons
+local secretButtons = {
+    {Name="cid", Path="Tengen.Skill1b.Z.TextButtonm1.Hitbox", Args={8,1}},
+    {Name="geto", Path="Tengen.Skill1b.Z.TextButtonm1.Hitbox", Args={8,1}},
+    {Name="guts", Path="Zabuza.Skill1b.Z.TextButtonm1.Hitbox", Args={8,1}},
+    {Name="escanor", Path="Zabuza.Skill1b.Z.TextButtonm1.Hitbox", Args={8,1}},
+    {Name="yorus v3", Path="YoruV3.Skill1b.Z.TextButtonm1.Hitbox", Args={8,3}}
+}
+for _, btn in ipairs(secretButtons) do
+    MainTab:AddButton({
+        Name = btn.Name,
+        Callback = function()
+            task.spawn(function()
+                while true do
+                    local pathSplit = split(btn.Path,".")
+                    local current = PlayerGui:FindFirstChild(pathSplit[1])
+                    if current then
+                        for i=2,#pathSplit do
+                            current = current:FindFirstChild(pathSplit[i])
+                        end
+                        if current then
+                            safe(function() current:FireServer(unpack(btn.Args)) end)
+                        end
+                    end
+                    task.wait()
+                end
+            end)
+        end
+    })
+end
+
+-- ===== Inf TTK Tab =====
+local InfTab = Window:MakeTab({Name="Inf TTK", PremiumOnly=false})
+local infTTK = false
+local infTTKConnection
+
+InfTab:AddToggle({
+    Name="Enable Inf TTK",
+    Default=false,
+    Callback=function(state)
+        infTTK = state
+        if state then
+            -- Báº­t Inf TTK
+            infTTKConnection = task.spawn(function()
+                while infTTK do
+                    task.wait(0.1)
+                    safe(function()
+                        sethiddenproperty(LocalPlayer,"SimulationRadius",1e12)
+                        sethiddenproperty(LocalPlayer,"MaxSimulationRadius",1e12)
+                    end)
+                    local island = workspace.MAP:FindFirstChild("STARTER ISLAND [ Lv 1+ ]")
+                    if island then
+                        local toolParent = island:GetChildren()[5]
+                        if toolParent then
+                            local tool = toolParent:FindFirstChild("Real Triple Katana")
+                            if tool and tool:FindFirstChild("Z") then
+                                safe(function() tool.Z.Fire:FireServer() end)
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            -- Táº¯t Inf TTK
+            infTTK = false
+            if infTTKConnection then
+                task.cancel(infTTKConnection)
+                infTTKConnection = nil
+            end
+        end
+    end
+})
+-- ===== Anti Kick =====
+local oldKick
+oldKick = hookmetamethod(LocalPlayer, "__namecall", function(self, ...)
+    local method = getnamecallmethod()
+    if tostring(method):lower() == "kick" then
+        return nil
+    end
+    return oldKick(self, ...)
+end)
+hookfunction(LocalPlayer.Kick, function(...) return nil end)
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local oldIndex = mt.__index
+mt.__index = newcclosure(function(self, key)
+    if tostring(key):lower() == "kick" then
+        return function() return nil end
+    end
+    return oldIndex(self, key)
+end)
+
+-- ===== Auto Quest Tab =====
+local QuestTab = Window:MakeTab({Name="Auto Quest", PremiumOnly=false})
+local autoQuest = false
+QuestTab:AddToggle({
+    Name="Auto Quest",
+    Default=false,
+    Callback=function(state)
+        autoQuest = state
+        task.spawn(function()
+            while autoQuest do
+                task.wait(1)
+                for i=1,3 do
+                    local q = PlayerGui:FindFirstChild("QuestTake")
+                    local btn = q and q:FindFirstChild("Accept"..i)
+                    local re = btn and btn:FindFirstChildOfClass("RemoteEvent")
+                    if re then safe(function() re:FireServer() end) end
+                end
+            end
+        end)
+    end
+})
+
+-- ===== Secret Fruit Tab =====
+local FruitTab = Window:MakeTab({Name="Secret Fruit", PremiumOnly=false})
+FruitTab:AddButton({
+    Name="Auto Quay Secret Fruit Sea 1",
+    Callback=function()
+        task.spawn(function()
+            while true do
+                local island = workspace.MAP:FindFirstChild("STARTER ISLAND [ Lv 1+ ]")
+                local secret = island and island:FindFirstChild("Secret Random")
+                local randomObj = secret and secret:FindFirstChild("RANDOM")
+                if randomObj then fireclickdetector(randomObj) end
+                task.wait()
+            end
+        end)
+    end
+})
+
+FruitTab:AddButton({
+    Name="Auto Quay Secret Fruit Sea 2",
+    Callback=function()
+        task.spawn(function()
+            while true do
+                local marineIsland = workspace:FindFirstChild("Marine Island [ 3000 - 5000 ]")
+                local secret = marineIsland and marineIsland:FindFirstChild("Secret Random")
+                local randomObj = secret and secret:FindFirstChild("RANDOM")
+                if randomObj then fireclickdetector(randomObj) end
+                task.wait()
+            end
+        end)
+    end
+})
+
+
+-- ===== Teleport Tab =====
+local TeleTab = Window:MakeTab({Name="Teleport", PremiumOnly=false})
+local sea1Islands = {
+    ["Äáº£o Khá»Ÿi Äáº§u"]=CFrame.new(485.58,35.56,-511.94),
+    ["Äáº£o Tuyáº¿t"]=CFrame.new(-915.91,33.76,282.44),
+    ["Äáº£o CĂ¡t"]=CFrame.new(-708.76,69.11,1745.13),
+    ["Äáº£o Trá»i"]=CFrame.new(-4594.52,4279.44,474.42),
+    ["Thá»‹ Tráº¥n End"]=CFrame.new(-2223.75,36.34,1965.90),
+    ["Äáº£o Minh Mama"]=CFrame.new(2569.90,51.10,-65.44),
+    ["Äáº£o Dark"]=CFrame.new(-3465.68,66.25,3718.19)
+}
+local sea2Islands = {
+    ["Äáº£o Kaido"]=CFrame.new(-685,87690,789),
+    ["Äáº£o Platium"]=CFrame.new(-1258,87700,3260),
+    ["Äáº£o Marine"]=CFrame.new(-160,87750,-2010),
+    ["Äáº£o Nickbeo"]=CFrame.new(-1600,87700,637),
+    ["Äáº£o Garou"]=CFrame.new(1600,87700,1073),
+    ["Äáº£o Sukuna"]=CFrame.new(1500,87700,2800),
+    ["Äáº£o Grab"]=CFrame.new(2040,87700,50),
+    ["Äáº£o Cid vĂ  Geto"]=CFrame.new(1635,87710,-1085),
+    ["Äáº£o Sun"]=CFrame.new(1603,87700,-2191)
+}
+for name, cf in pairs(sea1Islands) do
+    TeleTab:AddButton({Name=name, Callback=function()
+        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then hrp.CFrame = cf end
+    end})
+end
+for name, cf in pairs(sea2Islands) do
+    TeleTab:AddButton({Name=name, Callback=function()
+        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then hrp.CFrame = cf end
+    end})
+end
+
+-- ===== Fals Attack Tab =====
+local FalsTab = Window:MakeTab({Name="Fals Attack", PremiumOnly=false})
+local fastAttack = false
+local function findHitboxEvent()
+    local char = LocalPlayer.Character
+    if not char then return nil end
+    local tool = char:FindFirstChildOfClass("Tool")
+    if not tool then return nil end
+    for _, v in ipairs(tool:GetDescendants()) do
+        if v:IsA("RemoteEvent") and v.Name == "Hitbox" then
+            return v
+        end
+    end
+    return nil
+end
+FalsTab:AddToggle({
+    Name="Fast Attack",
+    Default=false,
+    Callback=function(state)
+        fastAttack = state
+        task.spawn(function()
+            while fastAttack do
+                task.wait()
+                local remote = findHitboxEvent()
+                if remote then pcall(function() remote:FireServer(8,1) end) end
+            end
+        end)
+    end
+})
+
+-- ===== Auto Skill Tab =====
+local SkillTab = Window:MakeTab({Name = "Auto Skill", PremiumOnly = false})
+local function makeSkillToggle(tab, key)
+    tab:AddToggle({
+        Name = "Auto Skill "..key,
+        Default = false,
+        Callback = function(state)
+            getgenv()["autoskill"..key:lower()] = state
+            task.spawn(function()
+                while getgenv()["autoskill"..key:lower()] do
+                    task.wait()
+                    pcall(function()
+                        for _, v in pairs(LocalPlayer.Character:GetChildren()) do
+                            if v:IsA("Tool") and v:FindFirstChild(key) then
+                                for _, c in pairs(v[key]:GetChildren()) do
+                                    if c:IsA("RemoteEvent") then c:FireServer() end
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+    })
+end
+for _, key in ipairs({"Z","X","C","V","B","N"}) do
+    makeSkillToggle(SkillTab, key)
+end
+SkillTab:AddToggle({
+    Name = "Auto All Skills",
+    Default = false,
+    Callback = function(state)
+        getgenv().autoallskills = state
+        task.spawn(function()
+            while getgenv().autoallskills do
+                task.wait()
+                pcall(function()
+                    for _, v in pairs(LocalPlayer.Character:GetChildren()) do
+                        if v:IsA("Tool") then
+                            for _, key in ipairs({"Z","X","C","V","B","N"}) do
+                                local skillFolder = v:FindFirstChild(key)
+                                if skillFolder then
+                                    for _, c in pairs(skillFolder:GetChildren()) do
+                                        if c:IsA("RemoteEvent") then c:FireServer() end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    end
+})
+
+-- ===== Fix Lag Tab =====
+local LagTab = Window:MakeTab({Name="Fix Lag", PremiumOnly=false})
+LagTab:AddButton({
+    Name = "XĂ³a Texture/Decal",
     Callback = function()
-	  game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "c7cf4abb-6682-4f33-86e2-03af70ab3153", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Swords",
-    Callback = function() 
-      game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "0940dc34-b96d-411a-926b-79dd00b45eab", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Haki color",
-    Callback = function() 
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "4bd0d732-1678-4957-a6a1-2fa220deebdc", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop prehistoric island ",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "e772b907-f854-4bc4-8826-f23dfb63fc68", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Redz Hub",
-    Callback = function() 
-       local Settings = {
-  JoinTeam = "Pirates"; -- Pirates/Marines
-  Translator = true; -- true/false
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end
+        end
+    end
+})
+LagTab:AddButton({
+    Name = "Táº¯t Hiá»‡u á»¨ng",
+    Callback = function()
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Fire") or v:IsA("Smoke") then v.Enabled = false end
+        end
+    end
+})
+LagTab:AddButton({
+    Name = "áº¨n Map Xa",
+    Callback = function()
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") and v:IsDescendantOf(workspace.MAP) then
+                v.Material = Enum.Material.SmoothPlastic
+                v.CastShadow = false
+            end
+        end
+    end
+})
+LagTab:AddButton({
+    Name = "Fix Full Lag (KhuyĂªn dĂ¹ng)",
+    Callback = function()
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Fire") or v:IsA("Smoke") then
+                v.Enabled = false
+            elseif v:IsA("Texture") or v:IsA("Decal") then
+                v:Destroy()
+            elseif v:IsA("BasePart") and v:IsDescendantOf(workspace.MAP) then
+                v.Material = Enum.Material.SmoothPlastic
+                v.CastShadow = false
+            end
+        end
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr.Character then
+                for _, part in ipairs(plr.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CastShadow = false end
+                end
+            end
+        end
+    end
+})
+
+-- ===== Super Tab =====
+local SuperTab = Window:MakeTab({Name="Super", PremiumOnly=false})
+
+-- â­Super Legendary Spam skill (kĂ­ch hoáº¡t toĂ n bá»™)
+SuperTab:AddButton({
+    Name = "â­Super Legendary Spam skill",
+    Callback = function()
+        for _, obj in ipairs(game:GetDescendants()) do
+            if obj:IsA("BindableEvent") or obj:IsA("RemoteEvent") then
+                if obj.Name == "Fire" then
+                    if obj:IsA("BindableEvent") then
+                        pcall(function() obj:Fire() end)
+                    elseif obj:IsA("RemoteEvent") then
+                        pcall(function() obj:FireServer() end)
+                    end
+                end
+            end
+        end
+        -- Náº¿u muá»‘n bá» log thĂ¬ xĂ³a dĂ²ng dÆ°á»›i
+        print("â­Super Legendary Spam skill: ÄĂ£ kĂ­ch hoáº¡t toĂ n bá»™")
+    end
+})
+
+-- đŸ”¥ Super Ultra Skill (chá»‰ kĂ­ch hoáº¡t 1 ná»­a)
+SuperTab:AddButton({
+    Name = "Super Ultra Skill",
+    Callback = function()
+        local allObjs = {}
+        for _, obj in ipairs(game:GetDescendants()) do
+            if obj:IsA("BindableEvent") or obj:IsA("RemoteEvent") then
+                if obj.Name == "Fire" then
+                    table.insert(allObjs, obj)
+                end
+            end
+        end
+        
+        local halfCount = math.floor(#allObjs / 2)
+        for i = 1, halfCount do
+            local obj = allObjs[i]
+            if obj:IsA("BindableEvent") then
+                pcall(function() obj:Fire() end)
+            elseif obj:IsA("RemoteEvent") then
+                pcall(function() obj:FireServer() end)
+            end
+        end
+        print("Super Ultra Skill: ÄĂ£ kĂ­ch hoáº¡t " .. halfCount .. " event")
+    end
+})
+
+-- ===== Bring Player Tab =====
+local BringTab = Window:MakeTab({Name = "Bring Player", PremiumOnly = false})
+local bringTarget = nil
+local bringEnabled = false
+
+-- Danh sĂ¡ch player
+local playerDropdown = BringTab:AddDropdown({
+    Name = "Select Player",
+    Default = "None",
+    Options = (function()
+        local t = {}
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer then table.insert(t, plr.Name) end
+        end
+        return t
+    end)(),
+    Callback = function(value)
+        bringTarget = Players:FindFirstChild(value)
+    end
+})
+
+-- Toggle báº­t/táº¯t bring
+BringTab:AddToggle({
+    Name = "Enable Bring",
+    Default = false,
+    Callback = function(state)
+        bringEnabled = state
+        if state then
+            task.spawn(function()
+                while bringEnabled do
+                    task.wait(0.1)
+                    if bringTarget and bringTarget.Character and bringTarget.Character:FindFirstChild("HumanoidRootPart") then
+                        local targetHRP = bringTarget.Character.HumanoidRootPart
+                        local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if myHRP then
+                            pcall(function()
+                                myHRP.CFrame = targetHRP.CFrame + Vector3.new(0,3,0)
+                            end)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+
+-- ===== Táº¡o tab má»›i =====
+local CheckTab = Window:MakeTab({
+    Name = "Check Player",
+    PremiumOnly = false
+})
+
+local selectedPlayerName = nil
+
+-- HĂ m láº¥y danh sĂ¡ch tĂªn ngÆ°á»i chÆ¡i realtime
+local function getPlayerNames()
+    local list = {}
+    for _, plr in pairs(Players:GetPlayers()) do
+        table.insert(list, plr.Name)
+    end
+    return list
+end
+
+-- Dropdown chá»n player
+local dropdown = CheckTab:AddDropdown({
+    Name = "NgÆ°á»i chÆ¡i check",
+    Default = "Chá»n...",
+    Options = getPlayerNames(),
+    Callback = function(value)
+        selectedPlayerName = value
+    end
+})
+
+-- Cáº­p nháº­t dropdown khi player join/leave
+Players.PlayerAdded:Connect(function(plr)
+    table.insert(dropdown.Options, plr.Name)
+    dropdown:Refresh(dropdown.Options)
+end)
+Players.PlayerRemoving:Connect(function(plr)
+    for i, name in ipairs(dropdown.Options) do
+        if name == plr.Name then
+            table.remove(dropdown.Options, i)
+            dropdown:Refresh(dropdown.Options)
+            if selectedPlayerName == plr.Name then selectedPlayerName = nil end
+            break
+        end
+    end
+end)
+
+-- NĂºt check 3 kho
+CheckTab:AddButton({
+    Name = "Check 3 kho",
+    Callback = function()
+        if not selectedPlayerName or selectedPlayerName == "Chá»n..." then
+            OrionLib:MakeNotification({
+                Name = "Lá»—i",
+                Content = "Vui lĂ²ng chá»n má»™t ngÆ°á»i chÆ¡i!",
+                Image = "rbxassetid://4483345998",
+                Time = 3
+            })
+            return
+        end
+
+        local plr = Players:FindFirstChild(selectedPlayerName)
+        if not plr then
+            OrionLib:MakeNotification({
+                Name = "Lá»—i",
+                Content = "NgÆ°á»i chÆ¡i khĂ´ng tá»“n táº¡i!",
+                Image = "rbxassetid://4483345998",
+                Time = 3
+            })
+            return
+        end
+
+        local storedata, storedata1, storedata2
+        pcall(function() storedata = plr:FindFirstChild("storedata") end)
+        pcall(function() storedata1 = plr:FindFirstChild("storedata1") end)
+        pcall(function() storedata2 = plr:FindFirstChild("storedata2") end)
+
+        local msg = "ThĂ´ng tin 3 kho cá»§a "..selectedPlayerName..":\n"
+        msg = msg.."storedata: "..(storedata and tostring(storedata.Value) or "KhĂ´ng cĂ³").."\n"
+        msg = msg.."storedata1: "..(storedata1 and tostring(storedata1.Value) or "KhĂ´ng cĂ³").."\n"
+        msg = msg.."storedata2: "..(storedata2 and tostring(storedata2.Value) or "KhĂ´ng cĂ³")
+
+        OrionLib:MakeNotification({
+            Name = "3 Kho cá»§a "..selectedPlayerName,
+            Content = msg,
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+-- NĂºt check Level & Belis
+CheckTab:AddButton({
+    Name = "Check Level and Belis",
+    Callback = function()
+        if not selectedPlayerName or selectedPlayerName == "Chá»n..." then
+            OrionLib:MakeNotification({
+                Name = "Lá»—i",
+                Content = "Vui lĂ²ng chá»n má»™t ngÆ°á»i chÆ¡i!",
+                Image = "rbxassetid://4483345998",
+                Time = 3
+            })
+            return
+        end
+
+        local plr = Players:FindFirstChild(selectedPlayerName)
+        if not plr then
+            OrionLib:MakeNotification({
+                Name = "Lá»—i",
+                Content = "NgÆ°á»i chÆ¡i khĂ´ng tá»“n táº¡i!",
+                Image = "rbxassetid://4483345998",
+                Time = 3
+            })
+            return
+        end
+
+        local dataFolder
+        pcall(function() dataFolder = plr:FindFirstChild("Data") end)
+        if not dataFolder then
+            OrionLib:MakeNotification({
+                Name = "Lá»—i",
+                Content = "KhĂ´ng tĂ¬m tháº¥y Data cá»§a ngÆ°á»i chÆ¡i!",
+                Image = "rbxassetid://4483345998",
+                Time = 3
+            })
+            return
+        end
+
+        local level, belis
+        pcall(function() level = dataFolder:FindFirstChild("Levels") end)
+        pcall(function() belis = dataFolder:FindFirstChild("Belis") end)
+
+        local msg = "ThĂ´ng tin Level vĂ  Belis cá»§a "..selectedPlayerName..":\n"
+        msg = msg.."Level: "..(level and tostring(level.Value) or "KhĂ´ng cĂ³").."\n"
+        msg = msg.."Belis: "..(belis and tostring(belis.Value) or "KhĂ´ng cĂ³")
+
+        OrionLib:MakeNotification({
+            Name = "Level & Belis cá»§a "..selectedPlayerName,
+            Content = msg,
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+-- ===== ESP Tab NĂ¢ng Cao: Hiá»ƒn thá»‹ Sword + Devil Fruit + Melee + Item =====
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+local EspTab = Window:MakeTab({Name="ESP", PremiumOnly=false})
+local espEnabled = false
+local espLabels = {}
+
+-- Láº¥y tĂªn tool / sword / fruit / melee player Ä‘ang dĂ¹ng
+local function getPlayerItems(plr)
+    local items = {}
+    local char = plr.Character
+    if not char then return "" end
+
+    -- Tool / Sword Ä‘ang cáº§m
+    local tool = char:FindFirstChildOfClass("Tool")
+    if tool then table.insert(items, tool.Name) end
+
+    -- Armor máº·c trĂªn ngÆ°á»i
+    for _, armor in ipairs({
+        "Cursed-Armor","Unique-Armor","Darkness-Armor","Thunder-Armor",
+        "Diamond-Armor","Golden-Armor","Epic-Armor","Iron-Armor","Wooden-Armor"
+    }) do
+        if char:FindFirstChild(armor) then
+            table.insert(items, armor)
+        end
+    end
+
+    -- Láº¥y toĂ n bá»™ Tool trong Backpack (Devil Fruit / Sword / Item)
+    if plr:FindFirstChild("Backpack") then
+        for _, v in ipairs(plr.Backpack:GetChildren()) do
+            if v:IsA("Tool") and not table.find(items, v.Name) then
+                table.insert(items, v.Name)
+            end
+        end
+    end
+
+    -- Láº¥y thĂªm Tool trong Character (Melee, Sword, Fruit, Item khĂ¡c)
+    for _, v in ipairs(char:GetChildren()) do
+        if v:IsA("Tool") and not table.find(items, v.Name) then
+            table.insert(items, v.Name)
+        end
+    end
+
+    return table.concat(items, ", ")
+end
+
+-- Táº¡o hoáº·c cáº­p nháº­t ESP
+local function updateESP(plr)
+    if plr == LocalPlayer then return end
+    local char = plr.Character
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if not head then return end
+
+    local itemsText = getPlayerItems(plr)
+
+    if espLabels[plr] then
+        local label = espLabels[plr]:FindFirstChildOfClass("TextLabel")
+        if label then
+            label.Text = plr.Name .. "\n" .. itemsText
+        end
+    else
+        local billboard = Instance.new("BillboardGui")
+        billboard.Size = UDim2.new(0,200,0,100)
+        billboard.Adornee = head
+        billboard.AlwaysOnTop = true
+        billboard.Name = "ESPLabel"
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1,0,1,0)
+        label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.new(1,0,0)
+        label.TextStrokeTransparency = 0
+        label.Font = Enum.Font.SourceSansBold
+        label.TextScaled = true
+        label.Text = plr.Name .. "\n" .. itemsText
+        label.Parent = billboard
+
+        billboard.Parent = PlayerGui
+        espLabels[plr] = billboard
+    end
+end
+
+local function removeESP(plr)
+    if espLabels[plr] then
+        espLabels[plr]:Destroy()
+        espLabels[plr] = nil
+    end
+end
+
+-- Toggle ESP
+EspTab:AddToggle({
+    Name = "Enable ESP (Player + Sword + Fruit + Item)",
+    Default = false,
+    Callback = function(state)
+        espEnabled = state
+        if espEnabled then
+            for _, plr in ipairs(Players:GetPlayers()) do
+                updateESP(plr)
+            end
+        else
+            for plr, _ in pairs(espLabels) do
+                removeESP(plr)
+            end
+        end
+    end
+})
+
+-- Cáº­p nháº­t khi player join hoáº·c respawn
+Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(function()
+        if espEnabled then
+            task.wait(1)
+            updateESP(plr)
+        end
+    end)
+end)
+
+Players.PlayerRemoving:Connect(function(plr)
+    removeESP(plr)
+end)
+
+-- VĂ²ng láº·p update liĂªn tá»¥c
+task.spawn(function()
+    while true do
+        if espEnabled then
+            for _, plr in ipairs(Players:GetPlayers()) do
+                updateESP(plr)
+            end
+        end
+        task.wait(0.5)
+    end
+end)
+
+-- ===== Auto Nháº·t Äá»“ Tab =====
+local CollectTab = Window:MakeTab({
+    Name = "Auto Nháº·t Äá»“",
+    PremiumOnly = false
+})
+
+-- đŸŒŸ Auto Storage (Fruit, Sword, Melee)
+local autoStorage = false
+CollectTab:AddToggle({
+    Name = "đŸŒŸ Auto Storage",
+    Default = false,
+    Callback = function(state)
+        autoStorage = state
+        task.spawn(function()
+            while autoStorage do task.wait(0.2)
+                pcall(function()
+                    -- Fruit
+                    if game.Players.LocalPlayer.storedata.store.Value == "Store" then df(1)
+                    elseif game.Players.LocalPlayer.storedata.store1.Value == "Store" then df(2)
+                    elseif game.Players.LocalPlayer.storedata.store2.Value == "Store" then df(3)
+                    elseif game.Players.LocalPlayer.storedata.store3.Value == "Store" then df(4)
+                    elseif game.Players.LocalPlayer.storedata.store4.Value == "Store" then df(5)
+                    elseif game.Players.LocalPlayer.storedata.store5.Value == "Store" then df(6)
+                    elseif game.Players.LocalPlayer.storedata.store6.Value == "Store" then df(7)
+                    elseif game.Players.LocalPlayer.storedata.store7.Value == "Store" then df(8)
+                    elseif game.Players.LocalPlayer.storedata.store8.Value == "Store" then df(9)
+                    elseif game.Players.LocalPlayer.storedata.store9.Value == "Store" then df(10)
+                    end
+                    -- Sword
+                    if game.Players.LocalPlayer.storedata1.store.Value == "Store" then sw(-5)
+                    elseif game.Players.LocalPlayer.storedata1.store1.Value == "Store" then sw(-4)
+                    elseif game.Players.LocalPlayer.storedata1.store2.Value == "Store" then sw(-3)
+                    elseif game.Players.LocalPlayer.storedata1.store3.Value == "Store" then sw(-2)
+                    elseif game.Players.LocalPlayer.storedata1.store4.Value == "Store" then sw(-1)
+                    elseif game.Players.LocalPlayer.storedata1.store5.Value == "Store" then sw(0)
+                    elseif game.Players.LocalPlayer.storedata1.store6.Value == "Store" then sw(1)
+                    elseif game.Players.LocalPlayer.storedata1.store7.Value == "Store" then sw(2)
+                    elseif game.Players.LocalPlayer.storedata1.store8.Value == "Store" then sw(3)
+                    elseif game.Players.LocalPlayer.storedata1.store9.Value == "Store" then sw(4)
+                    end
+                    -- Melee
+                    if game.Players.LocalPlayer.storedata2.store.Value == "Store" then ml(-5)
+                    elseif game.Players.LocalPlayer.storedata2.store1.Value == "Store" then ml(-4)
+                    elseif game.Players.LocalPlayer.storedata2.store2.Value == "Store" then ml(-3)
+                    elseif game.Players.LocalPlayer.storedata2.store3.Value == "Store" then ml(-2)
+                    elseif game.Players.LocalPlayer.storedata2.store4.Value == "Store" then ml(-1)
+                    elseif game.Players.LocalPlayer.storedata2.store5.Value == "Store" then ml(0)
+                    elseif game.Players.LocalPlayer.storedata2.store6.Value == "Store" then ml(1)
+                    elseif game.Players.LocalPlayer.storedata2.store7.Value == "Store" then ml(2)
+                    elseif game.Players.LocalPlayer.storedata2.store8.Value == "Store" then ml(3)
+                    elseif game.Players.LocalPlayer.storedata2.store9.Value == "Store" then ml(4)
+                    end
+                end)
+            end
+        end)
+    end
+})
+
+-- â­ Touch Grabtools (cháº¡m Ä‘á»ƒ nháº·t Tool)
+local grabtools = false
+CollectTab:AddToggle({
+    Name = "â­ Touch Grabtools",
+    Default = false,
+    Callback = function(state)
+        grabtools = state
+        task.spawn(function()
+            while grabtools do task.wait()
+                pcall(function()
+                    for _, m in pairs(workspace:GetChildren()) do
+                        if m:IsA("Tool") and m:FindFirstChild("Handle") then
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, m.Handle, 1)
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, m.Handle, 0)
+                        end
+                    end
+                end)
+            end
+        end)
+    end
+})
+
+-- Grabtools (tá»± Ä‘á»™ng equip item rÆ¡i ra)
+local autoGrab = false
+CollectTab:AddToggle({
+    Name = "Grabtools (Auto Equip)",
+    Default = false,
+    Callback = function(state)
+        autoGrab = state
+        task.spawn(function()
+            while autoGrab do task.wait()
+                pcall(function()
+                    local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+                    if humanoid then
+                        for _, child in ipairs(workspace:GetChildren()) do
+                            if child:IsA("BackpackItem") and child:FindFirstChild("Handle") then
+                                humanoid:EquipTool(child)
+                            end
+                        end
+                    end
+                end)
+            end
+        end)
+    end
+})
+
+-- ===== Copy Skill Tab =====
+local CopyTab = Window:MakeTab({Name = "Copy Skill", PremiumOnly = false})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local copyTarget = nil
+local copyItem = nil
+local playerDropdown = nil
+
+-- Danh sĂ¡ch item chi tiáº¿t cho tá»«ng category
+local categoryItems = {
+    Fruit = {"Angel","Evil","Destroy","Element"},
+    Melee = {"Gojo","Sukuna","DragonCombatV2","Kaiser","Garp","Saitama","Garou","Vegeta","Itachi","Goku","Broly"},
+    Sword = {"Guts","Cid","Geto","Escanor","Meta bat","Pickleball","Rayleigh","SungJinWoo","SiuStyle","Shinji","Gryphon"},
+    Armor = {"Cursed Armor","Armor Epic"}
 }
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/tlredz/Scripts/refs/heads/main/main.luau"))(Settings)
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Min Gaming",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Min/refs/heads/main/MinBE"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Xeter Hub v1",
-    Callback = function()
-      getgenv().Version = "V1"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Loader/main/Xeter.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Xeter Hub v2",
-    Callback = function()
-      getgenv().Version = "V2"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Loader/main/Xeter.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Xeter Hub V3",
-    Callback = function()
-      getgenv().Version = "V3"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Loader/main/Xeter.lua"))()
-  end
-  })
-  AddButton(Tab3o, {
-     Name = "Shade ",
-    Callback = function()
-       loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Simple-Shader-37434"))()
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Rip Indra",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "4946b5f2-4a2c-44e8-947e-f336caebde29", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Dough King",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "d2f3855d-9b92-4515-8740-c0eb7ffcd781", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Tyrant",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "f12d49ac-05c5-49b4-865f-afc7b227ef60", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Mirage island",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "f12d49ac-05c5-49b4-865f-afc7b227ef60", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Dark Beard",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "b19eab3f-5da2-41f9-8d57-8822163b7219", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Maru Hub",
-    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/KimP/refs/heads/main/MaruHub"))()
-  end
-  })
-  AddButton(Tab4o, {
-     Name = "Banana Hub Premium(24h Reset key 1 lần)",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Ditmemaybe/An/refs/heads/main/andepzai%20hub"))()
-  end
-  })
-  AddButton(Tab4o, {
-     Name = "Maru Hub Premium(24h Reset key 1 lần)",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Ditmemaybe/An/refs/heads/main/andepzai%20hub"))()
-  end
-  })
-  AddButton(Tab4o, {
-     Name = "W-azure Hub (24h Reset key 1 lần)",
-    Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "c7cf4abb-6682-4f33-86e2-03af70ab3153", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Banana Free",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/kimprobloxdz/Banana-Free/refs/heads/main/Protected_5609200582002947.lua.txt"))()
-  end
-  })
-  AddButton(Tab1o, {
-     Name = "Speeds hub",
-    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-  end
-  })
-  AddButton(Tab1o, {
-     Name = "Thunder Hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Min/refs/heads/main/MinThRz"))()    
-  end
-  })
-  AddButton(Tab1o, {
-     Name = "Zinner Hub Blox Fruit",
-    Callback = function() 
-      getgenv().Team = "Pirates"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HoangNguyenk8/Roblox/refs/heads/main/BF-Main.luau"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Huy Sad",
-    Callback = function() 
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/HuySadd/Huy-Sad/refs/heads/main/HuySad001.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Không Bt tên",
-    Callback = function()
-       loadstring(game:HttpGet('https://github.com/96soul/-/blob/main/load.gg?raw=true', true))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Master Hub",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/obfmoonsec/Masterhub/refs/heads/main/obf"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Ak Gaming",
-    Callback = function() 
-       getgenv().Team = "Pirates"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Bắp Red",
-    Callback = function() 
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/BapRed/main/BapRedHub"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Trẩu Roblox",
-    Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/TrauHub/refs/heads/main/TrauTX"))()
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Kitsune Island",
-    Callback = function() 
-    game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "cba5dc00-a9eb-411a-a708-2ceecfe33fb7", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab9o, {
-     Name = "Hop Soul Reaper",
-    Callback = function() 
-       game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, "42079b6f-5d1d-41e9-8e09-730c0b1dbcda", game.Players.LocalPlayer)
-  end
-  })
-  AddButton(Tab1o, {
-     Name = "Vxeze Hub (Hỗ Trợ 2 game)",
-    Callback = function() 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dex-Bear/Vxezehub/refs/heads/main/VxezeHubMain"))()    
-  end
-  })
-  AddButton(Tab5o, {
-     Name = "thanv1 Kaitun",
-    Callback = function()
-       Config = {
-["Melee"] = {
-["Superhuman"] = true,
-["Death Step"] = true,
-["Sharkman Karate"] = true,
-["Electric Claw"] = true,
-["Dragon Talon"] = true,
-["Godhuman"] = true
-},
-["Sword"] = {
-["Saber"] = true,
-["Rengoku"] = true,
-["Canvander"] = true,
-["Buddy Sword"] = true,
-["Yama"] = true,
-["Tushita"] = true,
-["True Triple Katana"] = true,
-["Cursed Dual Katana"] = true
-},
-["Gun"] = {
-["Kabucha"] = true,
-["Acidum Rifle"] = true,
-["Serpent Bow"] = true
-},
-["Mastery"] = {
-["Sword"] = true
-},
-["Setting"] = {
-["Enabled"] = true,
-["Bring Mob [Less Lag]"] = true,
-["Hop Server"] = true,
-["Reduce Lag"] = true,
-["Notifycation Remove"] = true,
-["Hop When Player Nearby"] = {
-["Enabled"] = true,
-["Radius"] = 350
-}
-}
-}
-loadstring(game:HttpGet("https://raw.githubusercontent.com/TrashLua/BloxFruits/main/KaitunBeta.RiseEvo"))()
-  end
-  })
- AddButton(Tab2o, {
-     Name = "Than hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/thantzy/thanhub/refs/heads/main/thanv1"))()
-  end
-  })
-  AddButton(Tab11o, {
-     Name = "Hung Hub Auto Bond",
-    Callback = function() 
-       getgenv().AutoExecute = true
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hungquan99/HungHub/main/loader.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Andezai Buy menk9999 hub",
-    Callback = function()
-       repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
-getgenv().Key = "W4XJYVMTXB5UHBTYJ5ARP6U6JY"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/menk9999/menk/refs/heads/main/menk2987.lua"))()
-  end
-  })
-  AddButton(Tab11o, {
-     Name = "Hung Hub Auto Bond",
-    Callback = function() 
-       getgenv().AutoExecute = true
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hungquan99/HungHub/main/loader.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Teddy hub",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletgojo/Haidepzai/refs/heads/main/TeddyHubv2"))()
-  end
-  })
-  AddButton(Tab10o, {
-     Name = "99 đêm trong rừng",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/H4xScripts/Loader/refs/heads/main/loader.lua", true))()    
-  end
-  })
-  AddButton(Tab10o, {
-     Name = "HuTao Hub",
-    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/SLK-gaming/Hutao-Hub/refs/heads/main/99-Nights-In-The-Forest.txt"))()    
-  end
-  })
-  AddButton(Tab12o, {
-     Name = "Arbix Hub",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Youifpg/Steal-a-Brianrot/refs/heads/main/ArbixHubBEST.lua"))()
-  end
-  })
-  AddButton(Tab12o, {
-     Name = "ko bt ten",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Estevansit0/KJJK/refs/heads/main/PusarX-loader.lua"))()    
-  end
-  })
-  AddButton(Tab7o, {
-     Name = "Aim Bot",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhTuanDzai-Hub/AimBotSkibidi/refs/heads/main/TuanAnhIOS-AIMBOT.Lua"))()
-  end
-  })
-  AddButton(Tab6o, {
-     Name = "BlueXHub",
-    Callback = function() 
-    getgenv().Config = {
-    ["Time To Sell"] = 35, -- Seconds
-    ["Craft Event"] = {
-        ["Crafters Seed Pack"] = true,
-        ["Anti Bee Egg"] = true
-    },
-    ["Dont Open Pack"] = false,
-    ["Mode Plant"] = "Auto", -- "Custom"
+-- HĂ m refresh dropdown Player
+local function refreshPlayerDropdown()
+    local t = {}
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then table.insert(t, plr.Name) end
+    end
+    if playerDropdown then
+        playerDropdown:Refresh(t, true)
+    end
+end
 
-    ["Seed"] = { -- Seed Plant Custom
-        ["Strawberry"] = 44,
-        ["Blueberry"] = 44,
-        ["Tomato"] = 44,
-        ["Loquat"] = 44,
-        ["Pineapple"] = 44,
-        ["Carrot"] = 44,
-        ["Bell Pepper"] = 44,
-        ["Green Apple"] = 44,
-        ["Feijoa"] = 44,
-        ["Avocado"] = 44,
-        ["Sugar Apple"] = 44,
-        ["Banana"] = 44,
-        ["Prickly Pear"] = 44,
-        ["Watermelon"] = 44,
-        ["Kiwi"] = 44
-    },
-    ["Keep Seed"] = {"Dragon Pepper", "Elephant Ears", "Sunflower", "Candy Blossom"},
-    ["Egg"] = {
-        ["Mythical Egg"] = {
-            ["Buy"] = true,
-            ["Place"] = true,
-            ["Priority"] = 5
-        },
-        ["Oasis Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 6
-        },
-        ["Anti Bee Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 1
-        },
-        ["Night Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 4
-        },
-        ["Bug Egg"] = {
-            ["Buy"] = true,
-            ["Place"] = true,
-            ["Priority"] = 2
-        },
-        ["Paradise Egg"] = {
-            ["Buy"] = true,
-            ["Place"] = true,
-            ["Priority"] = 3
-        },
-        ["Bee Egg"] = {
-            ["Buy"] = true,
-            ["Place"] = false,
-            ["Priority"] = 3
-        },
-        ["Dinosaur Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 1
-        },
-        ["Primal Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 1
-        },
-        ["Zen Egg"] = {
-            ["Place"] = true,
-            ["Priority"] = 1
-        }
-    },
+-- Dropdown chá»n Player
+playerDropdown = CopyTab:AddDropdown({
+    Name = "Chá»n Player",
+    Default = "None",
+    Options = {},
+    Callback = function(value)
+        copyTarget = Players:FindFirstChild(value)
+    end
+})
+refreshPlayerDropdown()
+Players.PlayerAdded:Connect(refreshPlayerDropdown)
+Players.PlayerRemoving:Connect(refreshPlayerDropdown)
 
-    ["Limit Tree"] = 250,
-    ["Sprinkler"] = {
-        ["Place Sprinkler"] = true,
-        ["Buy Sprinkler"] = true,
-        ["Basic Sprinkler"] = true,
-        ["Advanced Sprinkler"] = true,
-        ["Master Sprinkler"] = true,
-        ["Godly Sprinkler"] = true
-    },
-    ["PetNeedSend"] = {"Dragonfly", "Raccoon", "Disco Bee", "Butterfly", "Mimic Octopus", "Kitsune"},
-    ["Destroy Mode"] = {
-        ["Auto Destroy when have money"] = 1000000, -- its will destroy all trees select when money >= select
-        ["Mode Destroy"] = "Auto", -- "Custom"
-        ["Trees"] = {"Strawberry", "Blueberry", "Corn", "Orange Tulip", "Carrot"},
-        ["Rarity Destroy Auto"] = {"Common", "Uncommon", "Rare", "Legendary"},
-        ["Destroy Untill"] = 150
-    },
-    ["Zen Event"] = {
-        ["Restock Max Cost"] = 16000000,
-        ["Zen Seed Pack"] = true,
-        ["Zen Egg"] = true,
-        ["Koi"] = true,
-        ["Spiked Mango"] = true
-    },
-    ["Url"] = "", -- Webhook 
-    ["Black Screen"] = true,
-    ["Note"] = "Blue X Hub",
-    ["Pet Mode"] = {
-        ["Sell Pet"] = true,
-        ["Equip Pet"] = true,
-        ["Name Pet Equip"] = {
-            ["Kitsune"] = 5, -- Limit Pet Equip
-            "Giant Ant" -- Unlimited Pet
-        },
-        ["Max Slot Pet To Sell"] = 5, -- If Total Pet In Inventory >= ["Max Slot Pet To Sell"] script will sell pet
-        ["Upgrade Slot Egg"] = {
-            ["Enable"] = true,
-            ["Pet"] = {"Starfish"}
+-- Dropdown chá»n Fruit
+CopyTab:AddDropdown({
+    Name = "Chá»n Fruit",
+    Default = categoryItems.Fruit[1],
+    Options = categoryItems.Fruit,
+    Callback = function(v)
+        copyItem = v
+    end
+})
 
-        },
-        ["Pet Dont Delete"] = {"Queen Bee", "Red Fox", "Dragonfly", "Raccoon", "Disco Bee", "Butterfly",
-                               "Mimic Octopus", "Meerkat", "Sand Snake", "Fennec Fox", "Axolotl", "Hyacinth Macaw",
-                               "Hamster", "Golden Lab", "T-Rex", "Spinosaurus", "Ankylosaurus", "Kitsune"},
-        ["Dont Sell Pet If Weight > x"] = 10 -- Script dont sell pet if this weight >= 10
-    },
-    ["Webhook Mode"] = {
-        ["Enable Send Pet Weight"] = false,
-        ["Weight"] = 10 -- if Weight >= 10 they will send wh
-    }
-}
-loadstring(game:HttpGet("https://raw.githubusercontent.com/fakekuri/BlueXHub/refs/heads/main/kaitungag.lua"))()
-  end
-  })AddButton(Tab8o, {
-     Name = "teedy fake cuttay hub",
-    Callback = function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/Haidepzai/refs/heads/main/TEDDYHUB-AUTOPULLLever"))()
-  end
-  })
-  AddButton(Tab11o, {
-     Name = "auto win",
-    Callback = function() 
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/TwoGunVolley/Dedrail/refs/heads/main/Protected_8860927939362090.txt"))()
-  end
-  })
-  AddButton(Tab8o, {
-     Name = "Fly Up draco",
-    Callback = function() 
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/TdatR/Fly/refs/heads/main/TdatFly.txt"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Tuấn Anh ios",
+-- Dropdown chá»n Melee
+CopyTab:AddDropdown({
+    Name = "Chá»n Melee",
+    Default = categoryItems.Melee[1],
+    Options = categoryItems.Melee,
+    Callback = function(v)
+        copyItem = v
+    end
+})
+
+-- Dropdown chá»n Sword
+CopyTab:AddDropdown({
+    Name = "Chá»n Sword",
+    Default = categoryItems.Sword[1],
+    Options = categoryItems.Sword,
+    Callback = function(v)
+        copyItem = v
+    end
+})
+
+-- Dropdown chá»n Armor
+CopyTab:AddDropdown({
+    Name = "Chá»n Armor",
+    Default = categoryItems.Armor[1],
+    Options = categoryItems.Armor,
+    Callback = function(v)
+        copyItem = v
+    end
+})
+
+-- HĂ m tĂ¬m skill remote
+local function findSkillRemote(player, item, key)
+    if not player then return nil end
+    local containers = {player.Character, player:FindFirstChildOfClass("Backpack")}
+    for _, container in ipairs(containers) do
+        if container then
+            for _, tool in ipairs(container:GetChildren()) do
+                if tool:IsA("Tool") and string.find(tool.Name, item) then
+                    local skillFolder = tool:FindFirstChild(key)
+                    if skillFolder then
+                        for _, ev in ipairs(skillFolder:GetChildren()) do
+                            if ev:IsA("RemoteEvent") then
+                                return ev
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- NĂºt skill Z-X-C-V-F-N-K
+for _, key in ipairs({"Z","X","C","V","F","N","K"}) do
+    CopyTab:AddButton({
+        Name = "DĂ¹ng Skill "..key,
+        Callback = function()
+            if copyTarget and copyItem then
+                local remote = findSkillRemote(copyTarget, copyItem, key)
+                if remote then
+                    pcall(function() remote:FireServer() end)
+                    print("ÄĂ£ copy skill "..key.." tá»« "..copyTarget.Name.." ("..copyItem..")")
+                else
+                    warn("KhĂ´ng tĂ¬m tháº¥y skill "..key.." tá»« "..copyTarget.Name.." ("..copyItem..")")
+                end
+            else
+                warn("ChÆ°a chá»n player hoáº·c item!")
+            end
+        end
+    })
+end
+
+-- ===== Auto Mua Äá»“ Tab =====
+local CollectTab = Window:MakeTab({Name = "Auto Mua Äá»“", PremiumOnly = false})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local autoCollectFiltered = false
+CollectTab:AddToggle({
+    Name = "Auto Nháº·t Fruit/Melee/Item/Armor/Sword",
+    Default = false,
+    Callback = function(state)
+        autoCollectFiltered = state
+        task.spawn(function()
+            while autoCollectFiltered do
+                task.wait(0.3)
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        local name = v.Name:lower()
+                        local parentName = v.Parent and v.Parent.Name:lower() or ""
+
+                        -- Lá»c Ä‘Ăºng fruit / melee / item / armor / sword
+                        if string.find(name, "fruit") or string.find(parentName, "fruit")
+                        or string.find(name, "melee") or string.find(parentName, "melee")
+                        or string.find(name, "item") or string.find(parentName, "item")
+                        or string.find(name, "armor") or string.find(parentName, "armor")
+                        or string.find(name, "sword") or string.find(parentName, "sword") then
+                            
+                            -- Check TouchInterest
+                            for _, child in ipairs(v:GetChildren()) do
+                                if child:IsA("TouchTransmitter") then
+                                    pcall(function()
+                                        firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 0)
+                                        task.wait()
+                                        firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 1)
+                                    end)
+                                end
+                                if child:IsA("ClickDetector") then
+                                    pcall(function()
+                                        fireclickdetector(child)
+                                    end)
+                                end
+                                if child:IsA("ProximityPrompt") then
+                                    pcall(function()
+                                        fireproximityprompt(child)
+                                    end)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- ===== Check Backpack Tab =====
+local BackpackTab = Window:MakeTab({Name = "Check Backpack", PremiumOnly = false})
+
+local targetPlayer = nil
+
+-- Dropdown chá»n player
+local playerDropdown = BackpackTab:AddDropdown({
+    Name = "Chá»n Player",
+    Default = "None",
+    Options = (function()
+        local t = {}
+        for _, plr in ipairs(Players:GetPlayers()) do
+            table.insert(t, plr.Name)
+        end
+        return t
+    end)(),
+    Callback = function(value)
+        targetPlayer = Players:FindFirstChild(value)
+        if targetPlayer then
+            OrionLib:MakeNotification({
+                Name = "Check Backpack",
+                Content = "Äang chá»n: " .. targetPlayer.Name,
+                Time = 3
+            })
+        end
+    end
+})
+
+-- NĂºt check backpack
+BackpackTab:AddButton({
+    Name = "Check Backpack",
     Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhTuanDzai-Hub/TuanAnhIOS/refs/heads/main/TuanAnhIOS.lua"))()
-  end
-  })
-  AddButton(Tab13o, {
-     Name = "auto find fruit",
+        if not targetPlayer then
+            OrionLib:MakeNotification({
+                Name = "Check Backpack",
+                Content = "ChÆ°a chá»n player!",
+                Time = 3
+            })
+            return
+        end
+
+        local backpack = targetPlayer:FindFirstChild("Backpack")
+        if not backpack then
+            OrionLib:MakeNotification({
+                Name = "Check Backpack",
+                Content = targetPlayer.Name .. " khĂ´ng cĂ³ Backpack!",
+                Time = 3
+            })
+            return
+        end
+
+        local items = {}
+        for _, tool in ipairs(backpack:GetChildren()) do
+            if tool:IsA("Tool") then
+                table.insert(items, tool.Name)
+            end
+        end
+
+        if #items == 0 then
+            OrionLib:MakeNotification({
+                Name = "Check Backpack",
+                Content = targetPlayer.Name .. " backpack trá»‘ng!",
+                Time = 4
+            })
+        else
+            OrionLib:MakeNotification({
+                Name = "Check Backpack",
+                Content = targetPlayer.Name .. " cĂ³: " .. table.concat(items, ", "),
+                Time = 8
+            })
+        end
+    end
+})
+
+-- NĂºt refresh danh sĂ¡ch player
+BackpackTab:AddButton({
+    Name = "Refresh Player List",
     Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhTuanDzai-Hub/AutoFruitDepzai/refs/heads/main/TuanAnhIOS-Find-Fruit.Lua"))()
-  end
-  })
-  AddButton(Tab5o, {
-     Name = "TrongNguyen Kaitun",
+        local t = {}
+        for _, plr in ipairs(Players:GetPlayers()) do
+            table.insert(t, plr.Name)
+        end
+        playerDropdown:Refresh(t, true)
+    end
+})
+
+-- ===== Hitbox Player Tab =====
+local HitboxTab = Window:MakeTab({Name="Hitbox Player", PremiumOnly=false})
+
+local hitboxTarget = nil
+local hitboxEnabled = false
+local hitboxAllEnabled = false
+local hitboxSizeValue = 50 -- máº·c Ä‘á»‹nh 50
+
+-- Dropdown chá»n player
+local hitboxDropdown = HitboxTab:AddDropdown({
+    Name = "Select Player",
+    Default = "None",
+    Options = (function()
+        local t = {}
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer then table.insert(t, plr.Name) end
+        end
+        return t
+    end)(),
+    Callback = function(value)
+        hitboxTarget = Players:FindFirstChild(value)
+    end
+})
+
+-- Slider chá»‰nh size hitbox
+HitboxTab:AddSlider({
+    Name = "Hitbox Size",
+    Min = 10,
+    Max = 10000, -- tá»‘i Ä‘a 10k
+    Default = 50,
+    Color = Color3.fromRGB(0,255,0),
+    Increment = 10,
+    ValueName = "Size",
+    Callback = function(value)
+        hitboxSizeValue = value
+    end
+})
+
+-- Toggle báº­t táº¯t hitbox cho player chá»n
+HitboxTab:AddToggle({
+    Name = "Enable Hitbox (Selected)",
+    Default = false,
+    Callback = function(state)
+        hitboxEnabled = state
+        task.spawn(function()
+            while hitboxEnabled do
+                task.wait(0.2)
+                if hitboxTarget and hitboxTarget.Character then
+                    local hrp = hitboxTarget.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        safe(function()
+                            hrp.Size = Vector3.new(hitboxSizeValue, hitboxSizeValue, hitboxSizeValue)
+                            hrp.Transparency = 0.7
+                            hrp.BrickColor = BrickColor.new("Lime green")
+                            hrp.Material = Enum.Material.Neon
+                            hrp.CanCollide = false
+                        end)
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Toggle báº­t táº¯t hitbox cho táº¥t cáº£ player
+HitboxTab:AddToggle({
+    Name = "Enable Hitbox (All Players)",
+    Default = false,
+    Callback = function(state)
+        hitboxAllEnabled = state
+        task.spawn(function()
+            while hitboxAllEnabled do
+                task.wait(0.2)
+                for _, plr in ipairs(Players:GetPlayers()) do
+                    if plr ~= LocalPlayer and plr.Character then
+                        local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            safe(function()
+                                hrp.Size = Vector3.new(hitboxSizeValue, hitboxSizeValue, hitboxSizeValue)
+                                hrp.Transparency = 0.7
+                                hrp.BrickColor = BrickColor.new("Lime green")
+                                hrp.Material = Enum.Material.Neon
+                                hrp.CanCollide = false
+                            end)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- NĂºt Reset Hitbox (chá»‰ player chá»n)
+HitboxTab:AddButton({
+    Name = "Reset Hitbox (Selected)",
     Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/trongnguyenhubbloxfruit/Trongnguyentonghop/refs/heads/main/TrongNguyen-kaitun.txt"))()
-  end
-  })
-  AddButton(Tab3o, {
-     Name = "Fix Lag",
+        if hitboxTarget and hitboxTarget.Character then
+            local hrp = hitboxTarget.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                safe(function()
+                    hrp.Size = Vector3.new(2,2,1) -- máº·c Ä‘á»‹nh
+                    hrp.Transparency = 1
+                    hrp.Material = Enum.Material.Plastic
+                    hrp.BrickColor = BrickColor.new("Medium stone grey")
+                    hrp.CanCollide = true
+                end)
+            end
+        end
+    end
+})
+
+-- NĂºt Reset Hitbox (táº¥t cáº£ player)
+HitboxTab:AddButton({
+    Name = "Reset Hitbox (All Players)",
     Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Astral Hub",
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer and plr.Character then
+                local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    safe(function()
+                        hrp.Size = Vector3.new(2,2,1)
+                        hrp.Transparency = 1
+                        hrp.Material = Enum.Material.Plastic
+                        hrp.BrickColor = BrickColor.new("Medium stone grey")
+                        hrp.CanCollide = true
+                    end)
+                end
+            end
+        end
+    end
+})
+
+-- Cáº­p nháº­t dropdown khi player join/leave
+Players.PlayerAdded:Connect(function(plr)
+    hitboxDropdown:AddOption(plr.Name)
+end)
+Players.PlayerRemoving:Connect(function(plr)
+    if plr.Name == (hitboxTarget and hitboxTarget.Name) then
+        hitboxTarget = nil
+    end
+end)
+
+-- ===== Script Tab =====
+local ScriptTab = Window:MakeTab({Name = "Script Tab", PremiumOnly = false})
+
+ScriptTab:AddButton({
+    Name = "Duyhub",
     Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Overgustx2/Main/refs/heads/main/BloxFruits_25.html"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Zinner Hub Grow a garden",
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/huynhthingocmai/Sikibidi/refs/heads/main/Duyhub"))()
+    end
+})
+
+ScriptTab:AddButton({
+    Name = "LĂª Báº£o Duy",
     Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/HoangNguyenk8/Roblox/refs/heads/main/GrowAGarden.luau"))()    
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Min Gaming Fake Maru Hub",
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/duysira5/Update/refs/heads/main/obfuscated_script-1754738100963.lua.txt'))()
+    end
+})
+
+ScriptTab:AddButton({
+    Name = "Ngu Hub V2",
     Callback = function()
-      getgenv().Team = "Pirates"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MinGamingHubNew/RealMinGaming/refs/heads/main/MinGaminvHubBloxFruits.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Min Gaming English",
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/duysira5/GAUCUBU/refs/heads/main/GAUCUBU'))()
+    end
+})
+
+ScriptTab:AddButton({
+    Name = "Ngu Hub",
     Callback = function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Min/refs/heads/main/MinAE"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "HoHo Hub",
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/duysira5/TestHubfakeV1/refs/heads/main/obfuscated_script-1755084012951.lua"))()
+    end
+})
+
+ScriptTab:AddButton({
+    Name = "Auto Farm",
     Callback = function()
-       _G.HohoVersion = "v4"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Kimp Roblox",
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/duysira5/AUTOFARMVNP/refs/heads/main/AUTOFARMVNP"))()
+    end
+})
+
+-- ===== Setting Tab =====
+local SettingTab = Window:MakeTab({Name="Setting", PremiumOnly=false})
+
+-- â¡ WalkSpeed
+local walkspeed = 16
+SettingTab:AddSlider({
+    Name = "WalkSpeed",
+    Min = 16,
+    Max = 1000,
+    Default = 16,
+    Color = Color3.fromRGB(0,255,0),
+    Increment = 1,
+    ValueName = "Speed",
+    Callback = function(value)
+        walkspeed = value
+        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then humanoid.WalkSpeed = walkspeed end
+    end
+})
+-- Auto cáº­p nháº­t speed khi respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(1)
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if humanoid then humanoid.WalkSpeed = walkspeed end
+end)
+
+-- đŸ€ JumpPower
+local jumppower = 50
+SettingTab:AddSlider({
+    Name = "JumpPower",
+    Min = 50,
+    Max = 1000,
+    Default = 50,
+    Color = Color3.fromRGB(255,0,0),
+    Increment = 1,
+    ValueName = "Jump",
+    Callback = function(value)
+        jumppower = value
+        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then humanoid.JumpPower = jumppower end
+    end
+})
+-- Auto cáº­p nháº­t jump khi respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(1)
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if humanoid then humanoid.JumpPower = jumppower end
+end)
+
+-- đŸ€ Infinite Jump
+local infJump = false
+SettingTab:AddToggle({
+    Name = "Infinite Jump",
+    Default = false,
+    Callback = function(state)
+        infJump = state
+    end
+})
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infJump and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+        LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+    end
+end)
+
+-- đŸŒ€ Noclip
+local noclip = false
+SettingTab:AddToggle({
+    Name = "Noclip",
+    Default = false,
+    Callback = function(state)
+        noclip = state
+        task.spawn(function()
+            while noclip do
+                task.wait()
+                local char = LocalPlayer.Character
+                if char then
+                    for _, v in ipairs(char:GetDescendants()) do
+                        if v:IsA("BasePart") and v.CanCollide then
+                            v.CanCollide = false
+                        end
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- ===== Linh Tinh Tab =====
+local MiscTab = Window:MakeTab({
+    Name = "Linh Tinh",
+    PremiumOnly = false
+})
+
+-- Reset báº£n thĂ¢n
+MiscTab:AddButton({
+    Name = "Reset NhĂ¢n Váº­t",
     Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/KimP/refs/heads/main/KimPRobloxV3"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Andepzak by h.6.h",
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("Humanoid") then
+            char.Humanoid.Health = 0
+        end
+    end
+})
+
+-- Biáº¿n lÆ°u player má»¥c tiĂªu
+local tpTarget = nil
+
+-- HĂ m láº¥y danh sĂ¡ch player trá»« báº£n thĂ¢n
+local function getPlayerList()
+    local list = {}
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            table.insert(list, plr.Name)
+        end
+    end
+    return list
+end
+
+-- Dropdown chá»n player
+local tpDropdown = MiscTab:AddDropdown({
+    Name = "Chá»n Player",
+    Default = "None",
+    Options = getPlayerList(),
+    Callback = function(value)
+        tpTarget = Players:FindFirstChild(value)
+    end
+})
+
+-- NĂºt Teleport tá»›i player Ä‘Ă£ chá»n
+MiscTab:AddButton({
+    Name = "Teleport Tá»›i Player ÄĂ£ Chá»n",
     Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/h6hbii/AnDepZaiHub/refs/heads/main/AndepzaiHub.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Andepzai real",
+        if tpTarget and tpTarget.Character and tpTarget.Character:FindFirstChild("HumanoidRootPart") then
+            local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if myHRP then
+                myHRP.CFrame = tpTarget.Character.HumanoidRootPart.CFrame + Vector3.new(0,3,0)
+            end
+        end
+    end
+})
+
+-- Auto Teleport theo player Ä‘Ă£ chá»n
+local autoTP = false
+MiscTab:AddToggle({
+    Name = "Auto Teleport Theo Player",
+    Default = false,
+    Callback = function(state)
+        autoTP = state
+        task.spawn(function()
+            while autoTP do
+                task.wait(0.2)
+                if tpTarget and tpTarget.Character and tpTarget.Character:FindFirstChild("HumanoidRootPart") then
+                    local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    if myHRP then
+                        pcall(function()
+                            myHRP.CFrame = tpTarget.Character.HumanoidRootPart.CFrame + Vector3.new(0,3,0)
+                        end)
+                    end
+                end
+            end
+        end)
+    end
+})
+
+-- Cáº­p nháº­t dropdown khi player join/leave
+Players.PlayerAdded:Connect(function(plr)
+    table.insert(tpDropdown.Options, plr.Name)
+    tpDropdown:Refresh(tpDropdown.Options)
+end)
+Players.PlayerRemoving:Connect(function(plr)
+    for i, name in ipairs(tpDropdown.Options) do
+        if name == plr.Name then
+            table.remove(tpDropdown.Options, i)
+            break
+        end
+    end
+    tpDropdown:Refresh(tpDropdown.Options)
+end)
+
+-- ===== ThĂ´ng Tin YouTube =====
+local ytLink = "https://youtube.com/@gauyeuvnhehe?si=Yal72RmtmdQb8cim"
+MiscTab:AddLabel("YouTube: gauyeuvnhehe")
+
+MiscTab:AddButton({
+    Name = "Copy Link YouTube",
     Callback = function()
-       repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AnDepZaiHub/AnDepZaiHubBeta/refs/heads/main/AnDepZaiHubNewUpdated.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Tsuo Hub",
+        if setclipboard then
+            setclipboard(ytLink)
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Copy Link",
+                Text = "Clipboard khĂ´ng há»— trá»£, link: " .. ytLink,
+                Duration = 3
+            })
+        end
+    end
+})
+
+-- ===== Troll báº£n thĂ¢n =====
+MiscTab:AddButton({
+    Name = "áº¤n vĂ´ Ä‘i",
     Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Tsuo7/TsuoHub/main/Tsuoscripts"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Zis Roblox Banana Hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Zis/refs/heads/main/ZisOrion"))()
-  end
-  })
-  AddButton(Tab7o, {
-     Name = "Vxeze hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Vxeze-Hub-Auto-Bounty-42378"))()  
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "BlueXhub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "Yuri Hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Jadelly261/BloxFruits/main/YuriMain", true))() 
-  end
-  })
-  AddButton(Tab7o, {
-     Name = "Văn Thành ios",
-    Callback = function()
-       loadstring(Game:HttpGet("https://raw.githubusercontent.com/VanThanhIOS/OniiChanVanThanhIOS/refs/heads/main/oniichanpakavanthanhios"))()
-  end
-  })
-  AddButton(Tab3o, {
-     Name = "menk9999 FixLag",
-    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/trongnguyenhubbloxfruit/TrongnguyenFixLag/refs/heads/main/SkidCondimemay.txt"))()
-  end
-  })
-  AddButton(Tab5o, {
-     Name = "Yinner Hub Kaitun Hop",
-    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/cocaigidaumaskid/Yiner-Hub/refs/heads/main/KaitunTyrantOfTheSkies.lua"))()
-  end
-  })
-  AddButton(Tab11o, {
-     Name = "Zumacu Dead Rail",
-    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/skibidip1/Hack/refs/heads/main/Auto%20bond"))()
-  end
-  })
-  AddButton(Tab2o, {
-     Name = "NaNa Tv Hub",
-    Callback = function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/trongnguyenhubbloxfruit/NANATVHUB/refs/heads/main/NaNaTvHub.txt"))()
-  end
-  })
-    AddButton(Tab14o, {
-     Name = "Maru Hub Premium",
-    Callback = function()
-       getgenv().Key = "MARU-WN6LS-OPOW-B2MX-778PW-0US1J"
-getgenv().id = "1377267119451934830"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
-  end
-  })
-    AddButton(Tab14o, {
-     Name = "Banans Cat Hub Premium",
-    Callback = function()
-       repeat wait() until game:IsLoaded() and game.Players.LocalPlayer 
-getgenv().Key = "887b508e0464a08e0ea0fb14" 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/main/BananaHub.lua"))()
-  end
-  })
-    AddButton(Tab3o, {
-     Name = "FAKE LAG mm2",
-    Callback = function() 
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/catwljz/mm/refs/heads/main/fakelag.txt"))()
-  end
-  })
-  
-  
-  
-   
+        LocalPlayer:Kick("mĂ y Ä‘Ă£ bá»‹ troll đŸ˜‚")
+    end
+})
+
+-- ===== Credits Tab =====
+local Tab = Window:MakeTab({
+    Name = "Credits",
+    Icon = "rbxassetid://7072718362",
+    PremiumOnly = false
+})
+
+Tab:AddSection({Name = "Script Ä‘Æ°á»£c táº¡o bá»Ÿi GĂ¢udz by Hoang Nam ngÆ°á»i táº¡o script "})
+Tab:AddSection({Name = "thk nao che script lá» cáº¯t chimđŸ¤“"})
+
+-- ===== Toggle UI Button =====
+local Player = game.Players.LocalPlayer
+
+-- Táº¡o ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ToggleUI"
+ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Táº¡o ImageButton toggle
+local ToggleButton = Instance.new("ImageButton")
+ToggleButton.Name = "Toggle"
+ToggleButton.Parent = ScreenGui
+ToggleButton.Size = UDim2.new(0, 50, 0, 50)
+ToggleButton.Position = UDim2.new(0, 10, 1, -10) -- gĂ³c dÆ°á»›i trĂ¡i
+ToggleButton.AnchorPoint = Vector2.new(0, 1)
+ToggleButton.Image = "rbxassetid://129218883294022"
+
+-- Gradient xanh lĂ¡ -> xanh biá»ƒn
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 255, 128)
+ToggleButton.BackgroundTransparency = 0
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 128)), -- xanh lĂ¡
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 128, 255))  -- xanh biá»ƒn
+})
+Gradient.Rotation = 45
+Gradient.Parent = ToggleButton
+
+-- Thiáº¿t láº­p hĂ¬nh dáº¡ng vĂ  kĂ©o tháº£
+ToggleButton.ScaleType = Enum.ScaleType.Fit
+ToggleButton.Draggable = true
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0.2,0)
+Corner.Parent = ToggleButton
+
+-- Toggle UI báº±ng OrionLib khi click
+ToggleButton.MouseButton1Click:Connect(function()
+    if OrionLib then
+        OrionLib:ToggleUi()
+    end
+end)
