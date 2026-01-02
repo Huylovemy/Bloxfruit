@@ -1,12 +1,11 @@
+-- ===== ORIONLIB =====
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua"))()
 
--- ===== Bear hud =====
-local Bear hud = loadstring(game:HttpGet("https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua"))()
-
-local Window = Bear hud:MakeWindow({
-    Name = "Bear hud [beta]",
+local Window = OrionLib:MakeWindow({
+    Name = "Gáº¥u hub (free)",
     HidePremium = false,
     SaveConfig = true,
-    ConfigFolder = "Bear hud. [beta]"
+    ConfigFolder = "Gáº¥u hub (free)"
 })
 -- ===== SERVICES =====
 local Players = game:GetService("Players")
